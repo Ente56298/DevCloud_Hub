@@ -46,3 +46,12 @@ export interface Notification {
   read: boolean;
   type: 'success' | 'info' | 'warning' | 'error';
 }
+
+export interface AutomationTemplate {
+  id: string;
+  title: string;
+  description: string;
+  source: { name: string; icon: React.ComponentType<{ className?: string }> };
+  target: { name: string; icon: React.ComponentType<{ className?: string }> };
+  status: 'active' | 'inactive';
+}

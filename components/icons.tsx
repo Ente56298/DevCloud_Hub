@@ -147,3 +147,22 @@ export const InformationCircleIcon: React.FC<{ className?: string }> = (props) =
         <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
     </svg>
 );
+
+export const BoltIcon: React.FC<{ className?: string }> = (props) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+  </svg>
+);
+
+export const NotionIcon: React.FC<{ className?: string }> = (props) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-12h2v8h-2v-8zm-4 4h2v4H7v-4zm8 0h2v4h-2v-4z" />
+    <path d="M12.63 7.63L10.5 9.75l2.13 2.13L15 9.75l-2.37-2.12zM7.5 12.5l2.13 2.13L7.5 16.75l-2.13-2.12 2.13-2.13zm9.13-2.13L14.5 12.5l2.13 2.13 2.13-2.13-2.13-2.13zM10.37 16.37L12.5 14.25l-2.13-2.13L8.25 14.25l2.12 2.12z" />
+  </svg>
+);
+
+export const ZapierIcon: React.FC<{ className?: string }> = (props) => (
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FF4A00">
+    <path d="M21.5 2h-19C1.12 2 0 3.12 0 4.5v15C0 20.88 1.12 22 2.5 22h19c1.38 0 2.5-1.12 2.5-2.5v-15C24 3.12 22.88 2 21.5 2zM7 17H4v-5h3v5zm5.5 0h-3V7h3v10zm5.5 0h-3v-3h3v3z" />
+  </svg>
+);

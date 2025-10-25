@@ -12,6 +12,7 @@ import { GitHubModal } from './components/GitHubModal';
 import { SyncModal } from './components/SyncModal';
 import { SettingsModal } from './components/SettingsModal';
 import { NotificationsPanel } from './components/NotificationsPanel';
+import { AutomationsModal } from './components/AutomationsModal';
 import type { FileItem, View, Service, Notification } from './types';
 import { SERVICES, PROJECTS, MOCK_FILES } from './constants';
 import { FolderIcon } from './components/icons';
@@ -30,6 +31,7 @@ function App() {
   const [isSyncModalOpen, setSyncModalOpen] = useState(false);
   const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
   const [isNotificationsOpen, setNotificationsOpen] = useState(false);
+  const [isAutomationsModalOpen, setAutomationsModalOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
@@ -229,6 +231,7 @@ function App() {
         onOpenGitHub={() => setGitHubModalOpen(true)}
         onOpenSync={() => setSyncModalOpen(true)}
         onOpenSettings={() => setSettingsModalOpen(true)}
+        onOpenAutomations={() => setAutomationsModalOpen(true)}
       />
       <main className="flex flex-col flex-1 w-full overflow-hidden bg-white dark:bg-gray-900 relative">
         <Header 
@@ -323,6 +326,13 @@ function App() {
           onClose={() => setSettingsModalOpen(false)}
           theme={theme}
           onThemeChange={setTheme}
+        />
+      )}
+
+      {isAutomationsModalOpen && (
+        <AutomationsModal
+            onClose={() => setAutomationsModalOpen(false)}
+            onAutomationActivated={(title) => addNotification(`Automation Activated: ${title}`, 'success')}
         />
       )}
     </div>

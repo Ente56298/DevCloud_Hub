@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Service, Project, View } from '../types';
-import { AllFilesIcon, MagnifyingGlassIcon, PlusIcon, CpuChipIcon, GitHubIcon, ArrowPathIcon, SettingsIcon } from './icons';
+import { AllFilesIcon, MagnifyingGlassIcon, PlusIcon, CpuChipIcon, GitHubIcon, ArrowPathIcon, SettingsIcon, BoltIcon } from './icons';
 
 interface SidebarProps {
   services: Service[];
@@ -14,6 +14,7 @@ interface SidebarProps {
   onOpenGitHub: () => void;
   onOpenSync: () => void;
   onOpenSettings: () => void;
+  onOpenAutomations: () => void;
 }
 
 const NavItem: React.FC<{
@@ -47,7 +48,7 @@ const NavItem: React.FC<{
   </div>
 );
 
-export const Sidebar: React.FC<SidebarProps> = ({ services, projects, localDrives, currentView, onViewChange, onAnalyze, onAddLocalDrive, onAnalyzeEcosystem, onOpenGitHub, onOpenSync, onOpenSettings }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ services, projects, localDrives, currentView, onViewChange, onAnalyze, onAddLocalDrive, onAnalyzeEcosystem, onOpenGitHub, onOpenSync, onOpenSettings, onOpenAutomations }) => {
   return (
     <aside className="w-64 bg-gray-200 dark:bg-gray-800 p-4 shrink-0 flex flex-col space-y-6">
       <div className="text-2xl font-bold text-gray-900 dark:text-white px-2">DevCloud Hub</div>
@@ -132,6 +133,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ services, projects, localDrive
               icon={ArrowPathIcon}
               isActive={false}
               onClick={onOpenSync}
+            />
+            <NavItem
+              label="Automations"
+              icon={BoltIcon}
+              isActive={false}
+              onClick={onOpenAutomations}
             />
           </div>
         </div>
