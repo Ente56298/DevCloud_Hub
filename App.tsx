@@ -1,40 +1,46 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { AutomationsModal } from './components/AutomationsModal';
+import { AgentHubModal } from './components/AgentHubModal';
+import type { FileItem, View, Service, Notification, AutomationLogEntry, Project, AgentProfile } from './types';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
+import { NotificationsPanel } from './components/NotificationsPanel';
 import { FileExplorer } from './components/FileExplorer';
+import { FilePreviewModal } from './components/FilePreviewModal';
 import { UploadModal } from './components/UploadModal';
 import { GenerateReadmeModal } from './components/GenerateReadmeModal';
 import { CodeEditorModal } from './components/CodeEditorModal';
 import { ProjectAnalyzerModal } from './components/ProjectAnalyzerModal';
-import { FilePreviewModal } from './components/FilePreviewModal';
 import { EcosystemAnalyzerModal } from './components/EcosystemAnalyzerModal';
 import { GitHubModal } from './components/GitHubModal';
 import { SyncModal } from './components/SyncModal';
 import { SettingsModal } from './components/SettingsModal';
-import { NotificationsPanel } from './components/NotificationsPanel';
-import { AutomationsModal } from './components/AutomationsModal';
-import type { FileItem, View, Service, Notification } from './types';
-import { SERVICES, PROJECTS, MOCK_FILES } from './constants';
-import { FolderIcon } from './components/icons';
+import { MOCK_FILES, SERVICES, PROJECTS, AGENT_PROFILES } from './constants';
+import { DiskIcon, GitHubIcon } from './components/icons';
 
 function App() {
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [files, setFiles] = useState<FileItem[]>(MOCK_FILES);
+  const [services, setServices] = useState<Service[]>(SERVICES);
+  const [projects, setProjects] = useState<Project[]>(PROJECTS);
   const [localDrives, setLocalDrives] = useState<Service[]>([]);
+  const [agents, setAgents] = useState<AgentProfile[]>(AGENT_PROFILES);
   const [currentView, setCurrentView] = useState<View>({ type: 'service', id: 'all' });
+  const [previewingFile, setPreviewingFile] = useState<FileItem | null>(null);
+  const [editingFile, setEditingFile] = useState<FileItem | null>(null);
   const [isUploadModalOpen, setUploadModalOpen] = useState(false);
   const [isReadmeModalOpen, setReadmeModalOpen] = useState(false);
-  const [editingFile, setEditingFile] = useState<FileItem | null>(null);
-  const [previewingFile, setPreviewingFile] = useState<FileItem | null>(null);
-  const [analyzingDrive, setAnalyzingDrive] = useState<Service | null>(null);
-  const [isEcosystemAnalyzerOpen, setEcosystemAnalyzerOpen] = useState(false);
+  const [isAnalyzerModalOpen, setAnalyzerModalOpen] = useState<Service | null>(null);
+  const [isEcosystemAnalyzerModalOpen, setEcosystemAnalyzerModalOpen] = useState(false);
   const [isGitHubModalOpen, setGitHubModalOpen] = useState(false);
   const [isSyncModalOpen, setSyncModalOpen] = useState(false);
   const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
-  const [isNotificationsOpen, setNotificationsOpen] = useState(false);
+  const [isNotificationsPanelOpen, setNotificationsPanelOpen] = useState(false);
   const [isAutomationsModalOpen, setAutomationsModalOpen] = useState(false);
+  const [isAgentHubOpen, setAgentHubOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [automationLogs, setAutomationLogs] = useState<AutomationLogEntry[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -54,184 +60,133 @@ function App() {
     };
     setNotifications(prev => [newNotification, ...prev]);
   };
-
-  const currentProject = useMemo(() => {
-    if (currentView.type === 'project') {
-      return PROJECTS.find(p => p.id === currentView.id);
-    }
-    return undefined;
-  }, [currentView]);
-
-  const allServices = useMemo(() => [...SERVICES, ...localDrives], [localDrives]);
   
-  const unreadNotifications = useMemo(() => notifications.filter(n => !n.read).length, [notifications]);
+  const addAutomationLog = (message: string, status: AutomationLogEntry['status']) => {
+    const newLog: AutomationLogEntry = {
+      id: new Date().getTime().toString(),
+      message,
+      status,
+      timestamp: new Date().toISOString(),
+    };
+    setAutomationLogs(prev => [newLog, ...prev]);
+  };
 
   const filteredFiles = useMemo(() => {
+    let tempFiles = files;
     if (searchQuery) {
-      const lowercasedQuery = searchQuery.toLowerCase();
-      // When searching, we return a flat list of all matching files, regardless of directory.
-      return files.filter(f =>
-        f.name.toLowerCase().includes(lowercasedQuery) ||
-        (f.content && f.type === 'file' && !f.content.startsWith('data:image') && f.content.toLowerCase().includes(lowercasedQuery))
-      );
+        return tempFiles.filter(file => file.name.toLowerCase().includes(searchQuery.toLowerCase()));
     }
+    switch(currentView.type) {
+        case 'service':
+            if (currentView.id === 'all') return tempFiles;
+            return tempFiles.filter(file => file.service === currentView.id);
+        case 'project':
+            return tempFiles.filter(file => file.projectId === currentView.id);
+        case 'local':
+            return tempFiles.filter(file => file.service === currentView.id);
+        default:
+            return tempFiles;
+    }
+  }, [files, searchQuery, currentView]);
 
-    if (currentView.type === 'service' || currentView.type === 'local') {
-      if (currentView.id === 'all') return files;
-      return files.filter(f => f.service === currentView.id);
-    }
-    if (currentView.type === 'project') {
-      return files.filter(f => f.projectId === currentView.id);
-    }
-    return [];
-  }, [files, currentView, searchQuery]);
-  
-  const handleViewChange = (view: View) => {
-    setSearchQuery('');
-    setCurrentView(view);
-  };
-  
-  const handleAddLocalDrive = () => {
-    const driveName = prompt("Enter the name for the new local drive/folder:");
-    if (driveName) {
-      const newDriveId = `local-${Date.now()}`;
-      const newDrive: Service = {
-        id: newDriveId,
-        name: driveName,
-        icon: FolderIcon,
-      };
-      setLocalDrives(prev => [...prev, newDrive]);
-
-      // Add some mock files for the new drive to simulate content
-      const newMockFiles: FileItem[] = [
-        { id: `${newDriveId}-1`, name: 'index.html', type: 'file', size: '3 KB', modified: new Date().toISOString().split('T')[0], service: newDriveId, content: `<h1>Welcome to ${driveName}</h1>` },
-        { id: `${newDriveId}-2`, name: 'styles.css', type: 'file', size: '1 KB', modified: new Date().toISOString().split('T')[0], service: newDriveId, content: `body { font-family: sans-serif; }` },
-        { id: `${newDriveId}-3`, name: 'app.js', type: 'file', size: '2 KB', modified: new Date().toISOString().split('T')[0], service: newDriveId, content: `console.log('Hello, ${driveName}!');` },
-      ];
-      setFiles(prev => [...prev, ...newMockFiles]);
-      
-      addNotification(`Local drive "${driveName}" created successfully.`, 'success');
-      // Switch view to the newly added drive
-      setCurrentView({ type: 'local', id: newDriveId });
-    }
-  };
-
-  const handleUpload = (newFile: Omit<FileItem, 'id'>) => {
-    const fileWithId: FileItem = {
+  const handleFileUpload = (newFile: Omit<FileItem, 'id'>) => {
+    const fileToAdd: FileItem = {
       ...newFile,
       id: new Date().getTime().toString(),
     };
-    setFiles(prev => [...prev, fileWithId]);
-    addNotification(`File "${newFile.name}" uploaded successfully.`, 'success');
+    setFiles(prev => [fileToAdd, ...prev]);
+    addNotification(`File "${fileToAdd.name}" uploaded successfully.`, 'success');
   };
 
   const handleReadmeGenerated = (readmeContent: string, projectId: string) => {
-    const readmeFile: FileItem = {
-      id: new Date().getTime().toString(),
-      name: 'README.md',
-      type: 'file',
-      size: `${(readmeContent.length / 1024).toFixed(2)} KB`,
-      modified: new Date().toISOString().split('T')[0],
-      service: 'gdrive', // default to gdrive
-      projectId: projectId,
-      content: readmeContent,
-    };
-
-    // Replace existing README or add new one
-    const existingReadmeIndex = files.findIndex(f => f.projectId === projectId && f.name === 'README.md');
-    if (existingReadmeIndex > -1) {
-      setFiles(prev => {
-        const newFiles = [...prev];
-        const oldFile = newFiles[existingReadmeIndex];
-        newFiles[existingReadmeIndex] = { ...oldFile, ...readmeFile, id: oldFile.id };
-        return newFiles;
-      });
+    const existingReadme = files.find(f => f.projectId === projectId && f.name.toLowerCase() === 'readme.md');
+    if (existingReadme) {
+      setFiles(files.map(f => f.id === existingReadme.id ? { ...f, content: readmeContent, modified: new Date().toISOString().split('T')[0] } : f));
+      addNotification(`README.md for project updated.`, 'success');
     } else {
-      setFiles(prev => [...prev, readmeFile]);
+      const newReadme: FileItem = {
+        id: new Date().getTime().toString(),
+        name: 'README.md',
+        type: 'file',
+        size: `${(readmeContent.length / 1024).toFixed(2)} KB`,
+        modified: new Date().toISOString().split('T')[0],
+        service: 'gdrive',
+        projectId: projectId,
+        content: readmeContent,
+      };
+      setFiles(prev => [newReadme, ...prev]);
+      addNotification(`README.md generated for project.`, 'success');
     }
-    addNotification(`README.md for project "${currentProject?.name}" has been generated.`, 'success');
   };
 
   const handleFileSave = (fileId: string, newContent: string) => {
     setFiles(files.map(f => f.id === fileId ? { ...f, content: newContent, size: `${(newContent.length / 1024).toFixed(2)} KB`, modified: new Date().toISOString().split('T')[0] } : f));
+    addNotification(`File "${files.find(f=>f.id===fileId)?.name}" saved.`, 'success');
   };
+
+  const handleAddLocalDrive = () => {
+    const driveName = prompt("Enter a name for the new local drive (e.g., C_DRIVE):");
+    if (driveName) {
+      const newDrive: Service = {
+        id: driveName.toLowerCase().replace(/\s/g, '_'),
+        name: driveName,
+        icon: DiskIcon,
+      };
+      setLocalDrives(prev => [...prev, newDrive]);
+      addNotification(`Local drive "${driveName}" added.`, 'info');
+    }
+  };
+
+  const handleDeployAgent = (agentId: string, newStatus: 'active' | 'idle') => {
+      setAgents(prev => {
+          const updatedAgents = prev.map(agent => (agent.id === agentId) ? { ...agent, status: newStatus } : agent);
+          const toggledAgent = updatedAgents.find(a => a.id === agentId);
+          if (toggledAgent) {
+              const action = newStatus === 'active' ? 'Deployed' : 'Retired';
+              addAutomationLog(`Agent ${action}: ${toggledAgent.name}`, newStatus === 'active' ? 'success' : 'info');
+              addNotification(`${toggledAgent.name} has been ${action}.`, 'info');
+          }
+          return updatedAgents;
+      });
+  };
+  
+  const unreadNotifications = notifications.filter(n => !n.read).length;
+  const currentProject = currentView.type === 'project' ? projects.find(p => p.id === currentView.id) : undefined;
   
   const getHeaderTitle = () => {
-    if (searchQuery) {
-        return `Search Results`;
+    if (searchQuery) return `Searching for "${searchQuery}"`;
+    switch(currentView.type) {
+      case 'service':
+        if (currentView.id === 'all') return 'All Files';
+        return services.find(s => s.id === currentView.id)?.name || 'Files';
+      case 'project':
+        return projects.find(p => p.id === currentView.id)?.name || 'Project Files';
+      case 'local':
+        return localDrives.find(d => d.id === currentView.id)?.name || 'Local Files';
+      default:
+        return 'DevCloud Hub';
     }
-    if (currentView.type === 'service' || currentView.type === 'local') {
-      if (currentView.id === 'all') return 'All Files';
-      const service = allServices.find(s => s.id === currentView.id);
-      return service?.name || 'Files';
-    }
-    if (currentView.type === 'project') {
-      const project = PROJECTS.find(p => p.id === currentView.id);
-      return project?.name || 'Project';
-    }
-    return 'Files';
   }
-
-  const handleCloneRepo = (repoUrl: string, localName: string) => {
-    const newDriveId = `local-${Date.now()}`;
-    const newDrive: Service = {
-        id: newDriveId,
-        name: localName,
-        icon: FolderIcon,
-    };
-    setLocalDrives(prev => [...prev, newDrive]);
-
-    const repoName = repoUrl.split('/').pop()?.replace('.git', '') || 'repository';
-
-    const newRepoFiles: FileItem[] = [
-        { id: `${newDriveId}-1`, name: 'README.md', type: 'file', size: '1 KB', modified: new Date().toISOString().split('T')[0], service: newDriveId, content: `# ${repoName}\n\nCloned from ${repoUrl}` },
-        { id: `${newDriveId}-2`, name: 'package.json', type: 'file', size: '1 KB', modified: new Date().toISOString().split('T')[0], service: newDriveId, content: `{ "name": "${repoName}", "version": "1.0.0" }` },
-        { id: `${newDriveId}-3`, name: '.gitignore', type: 'file', size: '1 KB', modified: new Date().toISOString().split('T')[0], service: newDriveId, content: `node_modules\n.env` },
-        { id: `${newDriveId}-4`, name: 'src', type: 'folder', size: '0 KB', modified: new Date().toISOString().split('T')[0], service: newDriveId },
-        { id: `${newDriveId}-5`, name: 'index.js', type: 'file', size: '1 KB', modified: new Date().toISOString().split('T')[0], service: newDriveId, parentId: `${newDriveId}-4`, content: `console.log('Hello, ${repoName}!');` },
-    ];
-    setFiles(prev => [...prev, ...newRepoFiles]);
-    
-    addNotification(`Repository "${repoName}" cloned successfully.`, 'success');
-    setCurrentView({ type: 'local', id: newDriveId });
-    setGitHubModalOpen(false);
-  };
-
-  const handleSync = (sourceId: string, destinationId: string) => {
-      const sourceFiles = files.filter(f => f.service === sourceId && !f.parentId); // Sync top-level only for simplicity
-      
-      const newSyncedFiles: FileItem[] = sourceFiles.map(file => ({
-          ...file,
-          id: `${destinationId}-${file.id}-${Date.now()}`,
-          service: destinationId,
-      }));
-
-      setFiles(prev => [...prev, ...newSyncedFiles]);
-      setSyncModalOpen(false);
-      const sourceName = allServices.find(s => s.id === sourceId)?.name;
-      const destName = allServices.find(s => s.id === destinationId)?.name;
-      addNotification(`Sync complete! ${newSyncedFiles.length} files copied from ${sourceName} to ${destName}.`, 'info');
-  };
-  
-  const handleMarkAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-  };
 
   return (
     <div className="flex h-screen font-sans">
       <Sidebar
-        services={SERVICES}
-        projects={PROJECTS}
+        services={services}
+        projects={projects}
         localDrives={localDrives}
         currentView={currentView}
-        onViewChange={handleViewChange}
-        onAnalyze={setAnalyzingDrive}
+        onViewChange={(view) => {
+          setCurrentView(view);
+          setSearchQuery('');
+        }}
         onAddLocalDrive={handleAddLocalDrive}
-        onAnalyzeEcosystem={() => setEcosystemAnalyzerOpen(true)}
+        onAnalyze={setAnalyzerModalOpen}
+        onAnalyzeEcosystem={() => setEcosystemAnalyzerModalOpen(true)}
         onOpenGitHub={() => setGitHubModalOpen(true)}
         onOpenSync={() => setSyncModalOpen(true)}
         onOpenSettings={() => setSettingsModalOpen(true)}
         onOpenAutomations={() => setAutomationsModalOpen(true)}
+        onOpenAgentHub={() => setAgentHubOpen(true)}
       />
       <main className="flex flex-col flex-1 w-full overflow-hidden bg-white dark:bg-gray-900 relative">
         <Header 
@@ -241,39 +196,21 @@ function App() {
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           unreadNotifications={unreadNotifications}
-          onToggleNotifications={() => setNotificationsOpen(prev => !prev)}
+          onToggleNotifications={() => setNotificationsPanelOpen(!isNotificationsPanelOpen)}
         />
-        {isNotificationsOpen && (
-            <NotificationsPanel 
-                notifications={notifications}
-                onClose={() => setNotificationsOpen(false)}
-                onMarkAllAsRead={handleMarkAllAsRead}
-            />
+        {isNotificationsPanelOpen && (
+          <NotificationsPanel
+            notifications={notifications}
+            onClose={() => setNotificationsPanelOpen(false)}
+            onMarkAllAsRead={() => setNotifications(notifications.map(n => ({...n, read: true})))}
+          />
         )}
         <FileExplorer files={filteredFiles} onFileClick={setPreviewingFile} isSearching={!!searchQuery} />
       </main>
       
-      {isUploadModalOpen && (
-        <UploadModal
-          onClose={() => setUploadModalOpen(false)}
-          onUpload={handleUpload}
-          services={SERVICES}
-          projects={PROJECTS}
-          localDrives={localDrives}
-        />
-      )}
-      
-      {isReadmeModalOpen && currentProject && (
-        <GenerateReadmeModal
-          onClose={() => setReadmeModalOpen(false)}
-          onReadmeGenerated={handleReadmeGenerated}
-          project={currentProject}
-        />
-      )}
-
       {previewingFile && (
-        <FilePreviewModal
-          file={previewingFile}
+        <FilePreviewModal 
+          file={previewingFile} 
           onClose={() => setPreviewingFile(null)}
           onEdit={(file) => {
             setPreviewingFile(null);
@@ -289,40 +226,72 @@ function App() {
           onSave={handleFileSave}
         />
       )}
-
-      {analyzingDrive && (
+      
+      {isUploadModalOpen && (
+        <UploadModal
+          onClose={() => setUploadModalOpen(false)}
+          onUpload={handleFileUpload}
+          services={services}
+          projects={projects}
+          localDrives={localDrives}
+        />
+      )}
+      
+      {isReadmeModalOpen && currentProject && (
+        <GenerateReadmeModal
+          project={currentProject}
+          onClose={() => setReadmeModalOpen(false)}
+          onReadmeGenerated={handleReadmeGenerated}
+        />
+      )}
+      
+      {isAnalyzerModalOpen && (
         <ProjectAnalyzerModal
-          drive={analyzingDrive}
-          files={files.filter(f => f.service === analyzingDrive.id)}
-          onClose={() => setAnalyzingDrive(null)}
-          onAnalysisComplete={(driveName) => addNotification(`Analysis of "${driveName}" is complete.`, 'info')}
+          drive={isAnalyzerModalOpen}
+          files={files.filter(f => f.service === isAnalyzerModalOpen.id)}
+          onClose={() => setAnalyzerModalOpen(null)}
+          onAnalysisComplete={(driveName) => {
+            addNotification(`Analysis complete for ${driveName}.`, 'success');
+          }}
         />
       )}
 
-      {isEcosystemAnalyzerOpen && (
-        <EcosystemAnalyzerModal
-          onClose={() => setEcosystemAnalyzerOpen(false)}
-        />
+      {isEcosystemAnalyzerModalOpen && (
+          <EcosystemAnalyzerModal onClose={() => setEcosystemAnalyzerModalOpen(false)} />
       )}
-
+      
       {isGitHubModalOpen && (
-        <GitHubModal
+        <GitHubModal 
           onClose={() => setGitHubModalOpen(false)}
-          onClone={handleCloneRepo}
+          onClone={(repoUrl, localName) => {
+            const newDrive: Service = {
+              id: localName.toLowerCase().replace(/\s/g, '_'),
+              name: localName,
+              icon: GitHubIcon,
+            };
+            setLocalDrives(prev => [...prev, newDrive]);
+            addNotification(`Cloned "${repoUrl}" to "${localName}".`, 'success');
+            setGitHubModalOpen(false);
+          }}
           localDrives={localDrives}
         />
       )}
 
       {isSyncModalOpen && (
-        <SyncModal
+        <SyncModal 
           onClose={() => setSyncModalOpen(false)}
-          onSync={handleSync}
-          services={allServices}
+          onSync={(sourceId, destId) => {
+            const sourceName = [...services, ...localDrives].find(s => s.id === sourceId)?.name;
+            const destName = [...services, ...localDrives].find(s => s.id === destId)?.name;
+            addNotification(`Sync started from ${sourceName} to ${destName}.`, 'info');
+            setSyncModalOpen(false);
+          }}
+          services={[...services, ...localDrives]}
         />
       )}
-
+      
       {isSettingsModalOpen && (
-        <SettingsModal
+        <SettingsModal 
           onClose={() => setSettingsModalOpen(false)}
           theme={theme}
           onThemeChange={setTheme}
@@ -332,7 +301,24 @@ function App() {
       {isAutomationsModalOpen && (
         <AutomationsModal
             onClose={() => setAutomationsModalOpen(false)}
-            onAutomationActivated={(title) => addNotification(`Automation Activated: ${title}`, 'success')}
+            onAutomationToggled={(title, status) => {
+              addAutomationLog(`Flow ${status === 'active' ? 'Activated' : 'Deactivated'}: ${title}`, status === 'active' ? 'success' : 'info');
+              // Simulate a follow-up action
+              if (status === 'active') {
+                setTimeout(() => {
+                    addAutomationLog(`[${title}] Monitoring for trigger event...`, 'info');
+                }, 1500);
+              }
+            }}
+            logs={automationLogs}
+        />
+      )}
+      
+      {isAgentHubOpen && (
+        <AgentHubModal
+          agents={agents}
+          onClose={() => setAgentHubOpen(false)}
+          onDeployAgent={handleDeployAgent}
         />
       )}
     </div>

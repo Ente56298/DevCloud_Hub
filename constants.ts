@@ -1,5 +1,5 @@
-import { Service, Project, FileItem, Agent } from './types';
-import { GoogleDriveIcon, DropboxIcon, OneDriveIcon, TelegramIcon, ProjectIcon } from './components/icons';
+import { Service, Project, FileItem, AiAssistant, AgentProfile } from './types';
+import { GoogleDriveIcon, DropboxIcon, OneDriveIcon, TelegramIcon, ProjectIcon, ArrowsPointingInIcon, BookOpenIcon, ShieldCheckIcon, ArchiveBoxIcon, ChartBarSquareIcon, WrenchScrewdriverIcon } from './components/icons';
 
 export const SERVICES: Service[] = [
   { id: 'gdrive', name: 'Google Drive', icon: GoogleDriveIcon },
@@ -32,6 +32,51 @@ export const MOCK_FILES: FileItem[] = [
   { id: '16', name: 'style_guide.pdf', type: 'file', size: '5.2 MB', modified: '2023-10-20', service: 'dropbox', projectId: 'mobile', parentId: '15' },
 ];
 
-export const AI_AGENTS: Agent[] = [
+export const AI_ASSISTANTS: AiAssistant[] = [
   { id: 'gemini', name: 'Gemini' },
+];
+
+export const AGENT_PROFILES: AgentProfile[] = [
+  {
+    id: 'consolidator',
+    name: 'Consolidator Agent',
+    description: 'Detects and flags duplicate or versioned files across all connected drives to propose consolidation actions.',
+    icon: ArrowsPointingInIcon,
+    status: 'idle',
+  },
+  {
+    id: 'narrator',
+    name: 'Narrator Agent',
+    description: 'Generates executive summaries, project narratives, or update reports based on file activity and content.',
+    icon: BookOpenIcon,
+    status: 'idle',
+  },
+  {
+    id: 'auditor',
+    name: 'Auditor Agent',
+    description: 'Monitors file structures for compliance with predefined rules (e.g., presence of README, LICENCE files).',
+    icon: ShieldCheckIcon,
+    status: 'idle',
+  },
+  {
+    id: 'legacy_curator',
+    name: 'Legacy Curator Agent',
+    description: 'Identifies and tags old or inactive projects, suggesting archival or migration to cold storage.',
+    icon: ArchiveBoxIcon,
+    status: 'idle',
+  },
+  {
+    id: 'visualizer',
+    name: 'Visualizer Agent',
+    description: 'Generates data for dashboards (Grafana) or knowledge graphs (Neo4j) to visualize the ecosystem.',
+    icon: ChartBarSquareIcon,
+    status: 'idle',
+  },
+  {
+    id: 'auto_analyzer',
+    name: 'Auto-Analyzer Agent',
+    description: 'Periodically runs a self-assessment of the ecosystem and its own performance, suggesting improvements.',
+    icon: WrenchScrewdriverIcon,
+    status: 'idle',
+  },
 ];

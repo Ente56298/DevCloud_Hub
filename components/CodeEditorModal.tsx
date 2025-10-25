@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import type { FileItem, ChatMessage, Agent } from '../types';
+import type { FileItem, ChatMessage, AiAssistant } from '../types';
 import { getAiAssistance, AssistanceMode } from '../services/geminiService';
-import { AI_AGENTS } from '../constants';
+import { AI_ASSISTANTS } from '../constants';
 import { SparklesIcon, CodeBracketIcon, ArrowPathIcon, BeakerIcon, BugAntIcon, PaperAirplaneIcon } from './icons';
 
 interface CodeEditorModalProps {
@@ -31,7 +31,7 @@ export const CodeEditorModal: React.FC<CodeEditorModalProps> = ({ file, onClose,
   const [content, setContent] = useState(file.content || '');
   const [isSaving, setIsSaving] = useState(false);
   
-  const [selectedAgent, setSelectedAgent] = useState<Agent>(AI_AGENTS[0]);
+  const [selectedAgent, setSelectedAgent] = useState<AiAssistant>(AI_ASSISTANTS[0]);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [userInput, setUserInput] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -119,8 +119,8 @@ export const CodeEditorModal: React.FC<CodeEditorModalProps> = ({ file, onClose,
             <div className="p-3 border-b border-gray-200 dark:border-gray-700 flex items-center space-x-2">
                 <SparklesIcon className="w-5 h-5 text-purple-400" />
                 <h3 className="text-md font-semibold text-gray-900 dark:text-white">AI Assistant</h3>
-                <select value={selectedAgent.id} onChange={(e) => setSelectedAgent(AI_AGENTS.find(a => a.id === e.target.value) || AI_AGENTS[0])} className="ml-auto text-xs bg-gray-200 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-md py-1 px-2 text-gray-900 dark:text-white focus:ring-blue-500">
-                    {AI_AGENTS.map(agent => <option key={agent.id} value={agent.id}>{agent.name}</option>)}
+                <select value={selectedAgent.id} onChange={(e) => setSelectedAgent(AI_ASSISTANTS.find(a => a.id === e.target.value) || AI_ASSISTANTS[0])} className="ml-auto text-xs bg-gray-200 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-md py-1 px-2 text-gray-900 dark:text-white focus:ring-blue-500">
+                    {AI_ASSISTANTS.map(agent => <option key={agent.id} value={agent.id}>{agent.name}</option>)}
                 </select>
             </div>
             <div className="flex-1 p-4 overflow-y-auto space-y-4">
