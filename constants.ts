@@ -54,14 +54,14 @@ export const AGENT_PROFILES: AgentProfile[] = [
   {
     id: 'auditor',
     name: 'Fiscalizador de Autoría',
-    description: 'Audits file integrity, verifies metadata (creator, date, purpose), detects unauthorized changes, and reports on authorship issues.',
+    description: 'Realiza una auditoría completa de la integridad de los archivos, verificando metadatos y linaje para generar un Informe de Integridad de Autoría.',
     icon: ShieldCheckIcon,
     status: 'idle',
   },
   {
     id: 'liberator',
-    name: 'Agente de Liberación',
-    description: 'Evaluates if a resource should be returned or released. Restores authorship, generates download links, and logs the action.',
+    name: 'Agente de Liberación y Devolución',
+    description: 'Ejecuta el protocolo de devolución para recursos retenidos. Restaura autoría, genera enlaces de descarga y registra la acción en el Índice de Justicia de Recursos.',
     icon: ArrowUturnLeftIcon,
     status: 'idle',
   },
