@@ -1,0 +1,5 @@
+{
+  "name": "Copy of DevCloud Hub",
+  "description": "An application to use services like Telegram, Dropbox, Google Drive, and OneDrive as a centralized cloud storage and web server for development project files.",
+  "requestFramePermissions": []
+}
