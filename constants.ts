@@ -1,5 +1,5 @@
 import { Service, Project, FileItem, AiAssistant, AgentProfile } from './types';
-import { GoogleDriveIcon, DropboxIcon, OneDriveIcon, TelegramIcon, ProjectIcon, ArrowsPointingInIcon, BookOpenIcon, ShieldCheckIcon, ArchiveBoxIcon, ChartBarSquareIcon, WrenchScrewdriverIcon, MegaphoneIcon } from './components/icons';
+import { GoogleDriveIcon, DropboxIcon, OneDriveIcon, TelegramIcon, ProjectIcon, ArrowsPointingInIcon, BookOpenIcon, ShieldCheckIcon, ArchiveBoxIcon, ChartBarSquareIcon, WrenchScrewdriverIcon, MegaphoneIcon, ArrowUturnLeftIcon } from './components/icons';
 
 export const SERVICES: Service[] = [
   { id: 'gdrive', name: 'Google Drive', icon: GoogleDriveIcon },
@@ -53,9 +53,16 @@ export const AGENT_PROFILES: AgentProfile[] = [
   },
   {
     id: 'auditor',
-    name: 'Auditor Agent',
-    description: 'Monitors file structures for compliance with predefined rules (e.g., presence of README, LICENCE files).',
+    name: 'Fiscalizador de Autoría',
+    description: 'Audits file integrity, verifies metadata (creator, date, purpose), detects unauthorized changes, and reports on authorship issues.',
     icon: ShieldCheckIcon,
+    status: 'idle',
+  },
+  {
+    id: 'liberator',
+    name: 'Agente de Liberación',
+    description: 'Evaluates if a resource should be returned or released. Restores authorship, generates download links, and logs the action.',
+    icon: ArrowUturnLeftIcon,
     status: 'idle',
   },
   {

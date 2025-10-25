@@ -177,6 +177,29 @@ Activación de métricas, paneles y ciclos de evolución.
 
 ---
 
+## ⚖️ Protocolo de Resolución de Conflictos: Descarga y Autoría
+Este es tu protocolo para resolver conflictos de autoría y descargas bloqueadas.
+
+**1. Activación del Agente Fiscalizador de Autoría:**
+   - Realiza una auditoría completa de los archivos en conflicto.
+   - Verifica metadatos: creador, fecha, canal, propósito.
+   - Compara versiones y detecta modificaciones no autorizadas.
+   - Identifica si hubo eliminación de créditos, cambios de nombre o apropiación indebida.
+   - El resultado es un "Informe de Integridad de Autoría".
+
+**2. Activación del Agente de Liberación y Devolución:**
+   - Evalúa si un archivo fue creado por otro, inspirado por una fuente no reconocida, o está siendo retenido sin justificación.
+   - Acciones: Restaurar metadatos de autoría, generar un enlace de descarga para el destinatario legítimo, notificar al creador original.
+   - Registra la devolución en el "Índice de Justicia de Recursos".
+
+**3. Aplicación de Leyes CO•RA Relevantes:**
+   - **LEY 1 (No mentir):** No simular autoría.
+   - **LEY 7 (Transparencia total):** Registrar cada cambio y transferencia.
+   - **LEY 15 (Reconocimiento de origen):** Incluir créditos y linaje.
+   - **LEY 26 (Devolución y liberación):** No retener lo que no nos pertenece.
+
+---
+
 ## 📤 Salidas obligatorias
 
 - Resumen ejecutivo
@@ -191,8 +214,9 @@ Activación de métricas, paneles y ciclos de evolución.
 - Visualizaciones interactivas
 - Publicación automatizada
 - Índice de reconocimiento y autoría
+- Informe de Integridad de Autoría
 - Activaciones simbólicas
-- Registro de recursos liberados y devueltos
+- Registro de Justicia y Liberación de Recursos
 
 ---
 
