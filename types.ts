@@ -38,3 +38,11 @@ export interface Agent {
   id: string;
   name: string;
 }
+
+export interface Notification {
+  id: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+  type: 'success' | 'info' | 'warning' | 'error';
+}

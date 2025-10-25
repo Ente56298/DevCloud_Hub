@@ -7,9 +7,10 @@ interface ProjectAnalyzerModalProps {
   onClose: () => void;
   drive: Service;
   files: FileItem[];
+  onAnalysisComplete: (driveName: string) => void;
 }
 
-export const ProjectAnalyzerModal: React.FC<ProjectAnalyzerModalProps> = ({ onClose, drive, files }) => {
+export const ProjectAnalyzerModal: React.FC<ProjectAnalyzerModalProps> = ({ onClose, drive, files, onAnalysisComplete }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
@@ -26,12 +27,13 @@ export const ProjectAnalyzerModal: React.FC<ProjectAnalyzerModalProps> = ({ onCl
       const fileSummary = files.map(f => ({ name: f.name, type: f.type, size: f.size }));
       const result = await analyzeProject(fileSummary);
       setAnalysisResult(result);
+      onAnalysisComplete(drive.name);
     } catch (e: any) {
       setError(e.message || 'An unexpected error occurred.');
     } finally {
       setIsLoading(false);
     }
-  }, [files]);
+  }, [files, drive.name, onAnalysisComplete]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
