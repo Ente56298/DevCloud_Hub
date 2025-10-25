@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Service, Project, View } from '../types';
-import { AllFilesIcon, MagnifyingGlassIcon, PlusIcon, CpuChipIcon } from './icons';
+import { AllFilesIcon, MagnifyingGlassIcon, PlusIcon, CpuChipIcon, GitHubIcon, ArrowPathIcon } from './icons';
 
 interface SidebarProps {
   services: Service[];
@@ -11,6 +11,8 @@ interface SidebarProps {
   onAnalyze: (drive: Service) => void;
   onAddLocalDrive: () => void;
   onAnalyzeEcosystem: () => void;
+  onOpenGitHub: () => void;
+  onOpenSync: () => void;
 }
 
 const NavItem: React.FC<{
@@ -44,7 +46,7 @@ const NavItem: React.FC<{
   </div>
 );
 
-export const Sidebar: React.FC<SidebarProps> = ({ services, projects, localDrives, currentView, onViewChange, onAnalyze, onAddLocalDrive, onAnalyzeEcosystem }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ services, projects, localDrives, currentView, onViewChange, onAnalyze, onAddLocalDrive, onAnalyzeEcosystem, onOpenGitHub, onOpenSync }) => {
   return (
     <aside className="w-64 bg-gray-800 p-4 shrink-0 flex flex-col space-y-6">
       <div className="text-2xl font-bold text-white px-2">CloudBox</div>
@@ -117,6 +119,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ services, projects, localDrive
               icon={CpuChipIcon}
               isActive={false}
               onClick={onAnalyzeEcosystem}
+            />
+             <NavItem
+              label="GitHub Integration"
+              icon={GitHubIcon}
+              isActive={false}
+              onClick={onOpenGitHub}
+            />
+            <NavItem
+              label="Synchronization"
+              icon={ArrowPathIcon}
+              isActive={false}
+              onClick={onOpenSync}
             />
           </div>
         </div>

@@ -8,6 +8,8 @@ import { CodeEditorModal } from './components/CodeEditorModal';
 import { ProjectAnalyzerModal } from './components/ProjectAnalyzerModal';
 import { FilePreviewModal } from './components/FilePreviewModal';
 import { EcosystemAnalyzerModal } from './components/EcosystemAnalyzerModal';
+import { GitHubModal } from './components/GitHubModal';
+import { SyncModal } from './components/SyncModal';
 import type { FileItem, View, Service } from './types';
 import { SERVICES, PROJECTS, MOCK_FILES } from './constants';
 import { FolderIcon } from './components/icons';
@@ -22,6 +24,8 @@ function App() {
   const [previewingFile, setPreviewingFile] = useState<FileItem | null>(null);
   const [analyzingDrive, setAnalyzingDrive] = useState<Service | null>(null);
   const [isEcosystemAnalyzerOpen, setEcosystemAnalyzerOpen] = useState(false);
+  const [isGitHubModalOpen, setGitHubModalOpen] = useState(false);
+  const [isSyncModalOpen, setSyncModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const currentProject = useMemo(() => {
@@ -136,6 +140,44 @@ function App() {
     return 'Files';
   }
 
+  const handleCloneRepo = (repoUrl: string, localName: string) => {
+    const newDriveId = `local-${Date.now()}`;
+    const newDrive: Service = {
+        id: newDriveId,
+        name: localName,
+        icon: FolderIcon,
+    };
+    setLocalDrives(prev => [...prev, newDrive]);
+
+    const repoName = repoUrl.split('/').pop()?.replace('.git', '') || 'repository';
+
+    const newRepoFiles: FileItem[] = [
+        { id: `${newDriveId}-1`, name: 'README.md', type: 'file', size: '1 KB', modified: new Date().toISOString().split('T')[0], service: newDriveId, content: `# ${repoName}\n\nCloned from ${repoUrl}` },
+        { id: `${newDriveId}-2`, name: 'package.json', type: 'file', size: '1 KB', modified: new Date().toISOString().split('T')[0], service: newDriveId, content: `{ "name": "${repoName}", "version": "1.0.0" }` },
+        { id: `${newDriveId}-3`, name: '.gitignore', type: 'file', size: '1 KB', modified: new Date().toISOString().split('T')[0], service: newDriveId, content: `node_modules\n.env` },
+        { id: `${newDriveId}-4`, name: 'src', type: 'folder', size: '0 KB', modified: new Date().toISOString().split('T')[0], service: newDriveId },
+        { id: `${newDriveId}-5`, name: 'index.js', type: 'file', size: '1 KB', modified: new Date().toISOString().split('T')[0], service: newDriveId, parentId: `${newDriveId}-4`, content: `console.log('Hello, ${repoName}!');` },
+    ];
+    setFiles(prev => [...prev, ...newRepoFiles]);
+    
+    setCurrentView({ type: 'local', id: newDriveId });
+    setGitHubModalOpen(false);
+  };
+
+  const handleSync = (sourceId: string, destinationId: string) => {
+      const sourceFiles = files.filter(f => f.service === sourceId && !f.parentId); // Sync top-level only for simplicity
+      
+      const newSyncedFiles: FileItem[] = sourceFiles.map(file => ({
+          ...file,
+          id: `${destinationId}-${file.id}-${Date.now()}`,
+          service: destinationId,
+      }));
+
+      setFiles(prev => [...prev, ...newSyncedFiles]);
+      setSyncModalOpen(false);
+      alert(`Sync complete! ${newSyncedFiles.length} files copied from ${allServices.find(s => s.id === sourceId)?.name} to ${allServices.find(s => s.id === destinationId)?.name}.`);
+  };
+
   return (
     <div className="flex h-screen bg-gray-900 text-gray-200 font-sans">
       <Sidebar
@@ -147,6 +189,8 @@ function App() {
         onAnalyze={setAnalyzingDrive}
         onAddLocalDrive={handleAddLocalDrive}
         onAnalyzeEcosystem={() => setEcosystemAnalyzerOpen(true)}
+        onOpenGitHub={() => setGitHubModalOpen(true)}
+        onOpenSync={() => setSyncModalOpen(true)}
       />
       <main className="flex flex-col flex-1 w-full overflow-hidden">
         <Header 
@@ -207,6 +251,22 @@ function App() {
       {isEcosystemAnalyzerOpen && (
         <EcosystemAnalyzerModal
           onClose={() => setEcosystemAnalyzerOpen(false)}
+        />
+      )}
+
+      {isGitHubModalOpen && (
+        <GitHubModal
+          onClose={() => setGitHubModalOpen(false)}
+          onClone={handleCloneRepo}
+          localDrives={localDrives}
+        />
+      )}
+
+      {isSyncModalOpen && (
+        <SyncModal
+          onClose={() => setSyncModalOpen(false)}
+          onSync={handleSync}
+          services={allServices}
         />
       )}
     </div>
