@@ -71,7 +71,6 @@ export const ProjectAnalyzerModal: React.FC<ProjectAnalyzerModalProps> = ({ onCl
                 <div className="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-300 p-4 rounded-md whitespace-pre-wrap font-sans text-sm">
                    {analysisResult.split('\n').map((line, index) => {
                         if (line.startsWith('**') && line.endsWith('**')) {
-                            // Fix: Replaced `replaceAll` with `replace` using a global regex for broader JS compatibility.
                             return <p key={index} className="font-bold text-gray-900 dark:text-white mt-3 mb-1">{line.replace(/\*\*/g, '')}</p>
                         }
                         return <p key={index}>{line}</p>

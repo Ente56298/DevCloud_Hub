@@ -63,11 +63,9 @@ export const EcosystemAnalyzerModal: React.FC<EcosystemAnalyzerModalProps> = ({ 
       return <p key={index} className="my-1">{line}</p>;
     })
     .filter(Boolean)
-    // Fix: Replaced JSX.Element with React.ReactElement and added explicit types to fix "Cannot find namespace 'JSX'" error.
     .reduce((acc: (React.ReactElement | React.ReactElement[])[], line: React.ReactElement) => {
         const last = acc[acc.length - 1];
         if (Array.isArray(last) && last[0].type === 'table' && line.type === 'tr') {
-            // This is a bit of a hack to get rows into the table body
             const table = last[0];
             const tbody = table.props.children;
             const newTbody = React.cloneElement(tbody, {}, [...tbody.props.children, line]);
