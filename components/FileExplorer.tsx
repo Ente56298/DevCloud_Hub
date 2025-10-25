@@ -49,23 +49,23 @@ export const FileExplorer: React.FC<FileExplorerProps> = ({ files, onFileClick, 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {!isSearching && (
-        <div className="flex items-center p-5 py-3 border-b border-gray-700 shrink-0">
+        <div className="flex items-center p-5 py-3 border-b border-gray-200 dark:border-gray-700 shrink-0">
           {folderHistory.length > 0 && (
             <button
               onClick={handleBack}
-              className="mr-3 p-1 rounded-full hover:bg-gray-700 transition-colors"
+              className="mr-3 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               aria-label="Go back"
             >
-              <ChevronLeftIcon className="w-5 h-5 text-gray-300" />
+              <ChevronLeftIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
             </button>
           )}
-          <div className="text-gray-400 text-sm">
+          <div className="text-gray-500 dark:text-gray-400 text-sm">
             {breadcrumbs.map((crumb, i) => (
               <span key={i}>
                 {i > 0 && <span className="mx-2">/</span>}
                 <button 
                   onClick={() => handleBreadcrumbClick(i)}
-                  className={`hover:text-white ${i === breadcrumbs.length - 1 ? 'text-white font-medium' : ''}`}
+                  className={`hover:text-gray-900 dark:hover:text-white ${i === breadcrumbs.length - 1 ? 'text-gray-900 dark:text-white font-medium' : ''}`}
                 >
                   {crumb.name}
                 </button>

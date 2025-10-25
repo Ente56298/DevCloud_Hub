@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { FileExplorer } from './components/FileExplorer';
@@ -10,6 +10,7 @@ import { FilePreviewModal } from './components/FilePreviewModal';
 import { EcosystemAnalyzerModal } from './components/EcosystemAnalyzerModal';
 import { GitHubModal } from './components/GitHubModal';
 import { SyncModal } from './components/SyncModal';
+import { SettingsModal } from './components/SettingsModal';
 import type { FileItem, View, Service } from './types';
 import { SERVICES, PROJECTS, MOCK_FILES } from './constants';
 import { FolderIcon } from './components/icons';
@@ -26,7 +27,17 @@ function App() {
   const [isEcosystemAnalyzerOpen, setEcosystemAnalyzerOpen] = useState(false);
   const [isGitHubModalOpen, setGitHubModalOpen] = useState(false);
   const [isSyncModalOpen, setSyncModalOpen] = useState(false);
+  const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [theme]);
 
   const currentProject = useMemo(() => {
     if (currentView.type === 'project') {
@@ -179,7 +190,7 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-900 text-gray-200 font-sans">
+    <div className="flex h-screen font-sans">
       <Sidebar
         services={SERVICES}
         projects={PROJECTS}
@@ -191,8 +202,9 @@ function App() {
         onAnalyzeEcosystem={() => setEcosystemAnalyzerOpen(true)}
         onOpenGitHub={() => setGitHubModalOpen(true)}
         onOpenSync={() => setSyncModalOpen(true)}
+        onOpenSettings={() => setSettingsModalOpen(true)}
       />
-      <main className="flex flex-col flex-1 w-full overflow-hidden">
+      <main className="flex flex-col flex-1 w-full overflow-hidden bg-white dark:bg-gray-900">
         <Header 
           title={getHeaderTitle()}
           onUploadClick={() => setUploadModalOpen(true)}
@@ -267,6 +279,14 @@ function App() {
           onClose={() => setSyncModalOpen(false)}
           onSync={handleSync}
           services={allServices}
+        />
+      )}
+
+      {isSettingsModalOpen && (
+        <SettingsModal
+          onClose={() => setSettingsModalOpen(false)}
+          theme={theme}
+          onThemeChange={setTheme}
         />
       )}
     </div>

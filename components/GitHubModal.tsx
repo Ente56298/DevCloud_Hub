@@ -40,25 +40,25 @@ export const GitHubModal: React.FC<GitHubModalProps> = ({ onClose, onClone, loca
   const renderCloneTab = () => (
     <form onSubmit={handleClone} className="space-y-6">
       <div>
-        <label htmlFor="repoUrl" className="block text-sm font-medium text-gray-300">Repository URL</label>
+        <label htmlFor="repoUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Repository URL</label>
         <input
           type="url"
           id="repoUrl"
           value={repoUrl}
           onChange={(e) => setRepoUrl(e.target.value)}
-          className="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white p-2 focus:ring-blue-500 focus:border-blue-500"
+          className="mt-1 block w-full bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="https://github.com/user/repo.git"
           required
         />
       </div>
       <div>
-        <label htmlFor="localName" className="block text-sm font-medium text-gray-300">Local Directory Name</label>
+        <label htmlFor="localName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Local Directory Name</label>
         <input
           type="text"
           id="localName"
           value={localName}
           onChange={(e) => setLocalName(e.target.value)}
-          className="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white p-2 focus:ring-blue-500 focus:border-blue-500"
+          className="mt-1 block w-full bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="my-awesome-project"
           required
         />
@@ -74,25 +74,25 @@ export const GitHubModal: React.FC<GitHubModalProps> = ({ onClose, onClone, loca
   const renderPushTab = () => (
     <form onSubmit={handlePush} className="space-y-6">
       <div>
-        <label htmlFor="pushDrive" className="block text-sm font-medium text-gray-300">Local Repository</label>
+        <label htmlFor="pushDrive" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Local Repository</label>
         <select
           id="pushDrive"
           value={pushDrive}
           onChange={e => setPushDrive(e.target.value)}
-          className="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white p-2 focus:ring-blue-500 focus:border-blue-500"
+          className="mt-1 block w-full bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500"
         >
           {localDrives.length === 0 && <option disabled>No local drives available</option>}
           {localDrives.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
         </select>
       </div>
       <div>
-        <label htmlFor="commitMessage" className="block text-sm font-medium text-gray-300">Commit Message</label>
+        <label htmlFor="commitMessage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Commit Message</label>
         <input
           type="text"
           id="commitMessage"
           value={commitMessage}
           onChange={(e) => setCommitMessage(e.target.value)}
-          className="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md text-white p-2 focus:ring-blue-500 focus:border-blue-500"
+          className="mt-1 block w-full bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white p-2 focus:ring-blue-500 focus:border-blue-500"
           placeholder="feat: add new feature"
           required
         />
@@ -107,24 +107,24 @@ export const GitHubModal: React.FC<GitHubModalProps> = ({ onClose, onClone, loca
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-lg shadow-xl w-full max-w-lg m-4 transform transition-all">
-        <div className="p-6 border-b border-gray-700">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg m-4 transform transition-all">
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
-              <GitHubIcon className="w-6 h-6" />
-              <h2 className="text-xl font-semibold text-white">GitHub Integration</h2>
+              <GitHubIcon className="w-6 h-6 text-gray-800 dark:text-gray-200" />
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">GitHub Integration</h2>
             </div>
-            <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white text-2xl leading-none">&times;</button>
           </div>
         </div>
         
         <div className="p-6">
-            <div className="border-b border-gray-700 mb-6">
+            <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
                 <nav className="-mb-px flex space-x-6">
-                    <button onClick={() => setActiveTab('clone')} className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${activeTab === 'clone' ? 'border-blue-500 text-blue-400' : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'}`}>
+                    <button onClick={() => setActiveTab('clone')} className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${activeTab === 'clone' ? 'border-blue-500 text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-400 dark:hover:border-gray-500'}`}>
                         Clone Repository
                     </button>
-                    <button onClick={() => setActiveTab('push')} className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${activeTab === 'push' ? 'border-blue-500 text-blue-400' : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'}`}>
+                    <button onClick={() => setActiveTab('push')} className={`whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${activeTab === 'push' ? 'border-blue-500 text-blue-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-400 dark:hover:border-gray-500'}`}>
                         Push to Repository
                     </button>
                 </nav>
@@ -132,8 +132,8 @@ export const GitHubModal: React.FC<GitHubModalProps> = ({ onClose, onClone, loca
             {activeTab === 'clone' ? renderCloneTab() : renderPushTab()}
         </div>
 
-        <div className="p-6 bg-gray-800 rounded-b-lg flex justify-end">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-700 rounded-md hover:bg-gray-600">
+        <div className="p-6 bg-white dark:bg-gray-800 rounded-b-lg flex justify-end">
+            <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-800 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600">
                 Close
             </button>
         </div>

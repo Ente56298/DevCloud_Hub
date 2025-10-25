@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Service, Project, View } from '../types';
-import { AllFilesIcon, MagnifyingGlassIcon, PlusIcon, CpuChipIcon, GitHubIcon, ArrowPathIcon } from './icons';
+import { AllFilesIcon, MagnifyingGlassIcon, PlusIcon, CpuChipIcon, GitHubIcon, ArrowPathIcon, SettingsIcon } from './icons';
 
 interface SidebarProps {
   services: Service[];
@@ -13,6 +13,7 @@ interface SidebarProps {
   onAnalyzeEcosystem: () => void;
   onOpenGitHub: () => void;
   onOpenSync: () => void;
+  onOpenSettings: () => void;
 }
 
 const NavItem: React.FC<{
@@ -27,8 +28,8 @@ const NavItem: React.FC<{
       onClick={onClick}
       className={`flex items-center w-full px-4 py-2 text-sm text-left rounded-md transition-colors duration-150 ${
         isActive
-          ? 'bg-gray-700 text-white'
-          : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+          ? 'bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white'
+          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
       }`}
     >
       <Icon className="w-5 h-5 mr-3" />
@@ -37,7 +38,7 @@ const NavItem: React.FC<{
     {onAnalyze && (
       <button 
         onClick={onAnalyze}
-        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full text-gray-400 bg-gray-700 opacity-0 group-hover:opacity-100 hover:bg-gray-600 hover:text-white transition-opacity"
+        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full text-gray-500 dark:text-gray-400 bg-gray-300 dark:bg-gray-700 opacity-0 group-hover:opacity-100 hover:bg-gray-400 dark:hover:bg-gray-600 hover:text-gray-800 dark:hover:text-white transition-opacity"
         aria-label={`Analyze ${label}`}
       >
         <MagnifyingGlassIcon className="w-4 h-4" />
@@ -46,10 +47,10 @@ const NavItem: React.FC<{
   </div>
 );
 
-export const Sidebar: React.FC<SidebarProps> = ({ services, projects, localDrives, currentView, onViewChange, onAnalyze, onAddLocalDrive, onAnalyzeEcosystem, onOpenGitHub, onOpenSync }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ services, projects, localDrives, currentView, onViewChange, onAnalyze, onAddLocalDrive, onAnalyzeEcosystem, onOpenGitHub, onOpenSync, onOpenSettings }) => {
   return (
-    <aside className="w-64 bg-gray-800 p-4 shrink-0 flex flex-col space-y-6">
-      <div className="text-2xl font-bold text-white px-2">CloudBox</div>
+    <aside className="w-64 bg-gray-200 dark:bg-gray-800 p-4 shrink-0 flex flex-col space-y-6">
+      <div className="text-2xl font-bold text-gray-900 dark:text-white px-2">CloudBox</div>
       <nav className="flex-1 space-y-4">
         <div>
           <NavItem
@@ -92,7 +93,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ services, projects, localDrive
             <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Local Drives</h3>
             <button 
               onClick={onAddLocalDrive}
-              className="p-1 rounded-full text-gray-400 hover:bg-gray-700 hover:text-white transition-colors mr-2"
+              className="p-1 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-white transition-colors mr-2"
               aria-label="Add Local Drive"
             >
               <PlusIcon className="w-4 h-4" />
@@ -135,6 +136,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ services, projects, localDrive
           </div>
         </div>
       </nav>
+      <div className="mt-auto">
+         <NavItem
+            label="Settings"
+            icon={SettingsIcon}
+            isActive={false}
+            onClick={onOpenSettings}
+          />
+      </div>
     </aside>
   );
 };
