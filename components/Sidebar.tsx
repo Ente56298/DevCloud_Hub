@@ -53,7 +53,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ services, projects, localDrive
   return (
     <aside className="w-64 bg-gray-200 dark:bg-gray-800 p-4 shrink-0 flex flex-col space-y-6">
       <div className="text-2xl font-bold text-gray-900 dark:text-white px-2">DevCloud Hub</div>
-      <nav className="flex-1 space-y-4">
+      <nav className="flex-1 space-y-4 overflow-y-auto">
         <div>
           <NavItem
             label="All Files"
@@ -150,7 +150,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ services, projects, localDrive
           </div>
         </div>
       </nav>
-      <div className="mt-auto">
+      <div className="pt-4 border-t border-gray-300 dark:border-gray-700">
          <NavItem
             label="Settings"
             icon={SettingsIcon}
@@ -158,6 +158,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ services, projects, localDrive
             onClick={onOpenSettings}
           />
       </div>
+      <footer className="text-center text-xs text-gray-500 dark:text-gray-400 space-y-1">
+          <p>Arquitecto: DIOS</p>
+          <p>Implementador: Jorge Hernández</p>
+      </footer>
     </aside>
   );
 };

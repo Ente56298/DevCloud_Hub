@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { analyzeEcosystem } from '../services/geminiService';
-import { CpuChipIcon } from './icons';
+import { CpuChipIcon, LightBulbIcon } from './icons';
 
 interface EcosystemAnalyzerModalProps {
   onClose: () => void;
@@ -8,6 +8,7 @@ interface EcosystemAnalyzerModalProps {
 
 export const EcosystemAnalyzerModal: React.FC<EcosystemAnalyzerModalProps> = ({ onClose }) => {
   const [directoryInput, setDirectoryInput] = useState('');
+  const [symbolicNotes, setSymbolicNotes] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
@@ -21,14 +22,14 @@ export const EcosystemAnalyzerModal: React.FC<EcosystemAnalyzerModalProps> = ({ 
     setError(null);
     setAnalysisResult(null);
     try {
-      const result = await analyzeEcosystem(directoryInput);
+      const result = await analyzeEcosystem(directoryInput, symbolicNotes);
       setAnalysisResult(result);
     } catch (e: any) {
       setError(e.message || 'An unexpected error occurred.');
     } finally {
       setIsLoading(false);
     }
-  }, [directoryInput]);
+  }, [directoryInput, symbolicNotes]);
   
   const renderAnalysis = (result: string) => {
     // A simple markdown-to-jsx renderer
@@ -97,17 +98,34 @@ export const EcosystemAnalyzerModal: React.FC<EcosystemAnalyzerModalProps> = ({ 
         <div className="flex-1 flex overflow-hidden">
           {/* Input Panel */}
           <div className="w-1/2 p-6 flex flex-col border-r border-gray-200 dark:border-gray-700">
-            <label htmlFor="directoryInput" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Paste Ecosystem Data
-            </label>
-            <textarea
-              id="directoryInput"
-              value={directoryInput}
-              onChange={(e) => setDirectoryInput(e.target.value)}
-              className="w-full flex-1 bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white rounded-md p-3 border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 font-mono text-xs resize-none"
-              placeholder="e.g., Paste directory listings, AI Studio app lists, or exported browser history (CSV/JSON) here..."
-              disabled={isLoading}
-            />
+            <div className="flex-1 flex flex-col">
+              <label htmlFor="directoryInput" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Paste Ecosystem Data (directorios, apps, historial, etc.)
+              </label>
+              <textarea
+                id="directoryInput"
+                value={directoryInput}
+                onChange={(e) => setDirectoryInput(e.target.value)}
+                className="w-full flex-1 bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white rounded-md p-3 border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 font-mono text-xs resize-none"
+                placeholder="e.g., Paste directory listings, AI Studio app lists, or exported browser history (CSV/JSON) here..."
+                disabled={isLoading}
+              />
+            </div>
+            <div className="mt-4 flex flex-col">
+               <label htmlFor="symbolicNotes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <LightBulbIcon className="w-4 h-4 inline-block mr-1 mb-0.5" />
+                Anotaciones Simbólicas (Opcional - Activa Modo Potencialidades)
+              </label>
+              <textarea
+                id="symbolicNotes"
+                value={symbolicNotes}
+                onChange={(e) => setSymbolicNotes(e.target.value)}
+                rows={3}
+                className="w-full bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white rounded-md p-3 border border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-blue-500 font-sans text-sm resize-none"
+                placeholder="e.g., 'El archivo 'genesis_notes.txt' tiene valor fundacional...' o 'La carpeta 'CORA/fuentes' representa el núcleo del proyecto...'"
+                disabled={isLoading}
+              />
+            </div>
             {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
           </div>
 
